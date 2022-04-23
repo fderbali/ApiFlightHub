@@ -131,9 +131,13 @@ class TripController extends Controller
                 break;
         }
 
-        return response()->json(
-            $this->paginate($results,$request->perPage, $request->page)
-        );
+        if($this->request->page && $this->request->perPage) {
+            return response()->json(
+                $this->paginate($results, $request->perPage, $request->page)
+            );
+        } else {
+            return response()->json($results);
+        }
     }
 
     /**
