@@ -22,6 +22,7 @@ class CreateLegsTable extends Migration
             $table->string('arrival_airport', 3);
             $table->time('arrival_time');
             $table->float('price');
+            $table->unique(['airline','number']);
         });
     }
 
