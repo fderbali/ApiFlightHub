@@ -25,8 +25,8 @@ class TripRequest extends FormRequest
     {
         return [
             "cityPairs" => "required",
-            "perPage"=> "required|int",
-            "page"=> "required|int",
+            "perPage"=> "int",
+            "page"=> "int",
             "airlines" => "array|min:1",
         ];
     }
