@@ -13,12 +13,13 @@ use Illuminate\Pagination\Paginator;
 class TripController extends Controller
 {
     private $request;
-
+    private $results;
     /**
      * @param TripRequest $request
      */
     public function __construct(TripRequest $request){
         $this->request = $request;
+        $this->results = [];
     }
 
     /**
@@ -28,7 +29,6 @@ class TripController extends Controller
     public function buildTrips(): JsonResponse
     {
         $request = $this->request;
-        $results = [];
         switch (count($request->cityPairs)){
             case 1:
                 // One way
@@ -40,7 +40,7 @@ class TripController extends Controller
                         "price" => sprintf("%.2f",$itinerary->price),
                         "date_dep" => $request->cityPairs[0]["date_dep"]
                     ];
-                    $results[] = $result;
+                    $this->results[] = $result;
                 }
                 break;
             case 2:
@@ -64,7 +64,7 @@ class TripController extends Controller
                                 "date_dep" => $request->cityPairs[0]["date_dep"],
                                 "date_ret" => $request->cityPairs[1]["date_dep"]
                             ];
-                            $results[] = $result;
+                            $this->results[] = $result;
                         }
                     }
                 }
@@ -86,7 +86,7 @@ class TripController extends Controller
                                         "date_dep_second_leg" => $request->cityPairs[1]["date_dep"],
                                         "date_dep_third_leg" => $request->cityPairs[2]["date_dep"]
                                     ];
-                                    $results[] = $result;
+                                    $this->results[] = $result;
                                 }
                             }
                         }
@@ -120,7 +120,7 @@ class TripController extends Controller
                                                 "date_dep_third_leg" => $request->cityPairs[2]["date_dep"],
                                                 "date_dep_fourth_leg" => $request->cityPairs[3]["date_dep"]
                                             ];
-                                            $results[] = $result;
+                                            $this->results[] = $result;
                                         }
                                     }
                                 }
@@ -135,18 +135,14 @@ class TripController extends Controller
                 );
         }
         // Sort results before render
-        if($this->request->sortBy == "price"){
-            usort($results, function($a, $b) {
-                return $a['price'] <=> $b['price'];
-            });
-        }
+        $this->sort();
         // Paginate results if we have perPage and page in the request
         if($this->request->page && $this->request->perPage) {
             return response()->json(
-                $this->paginate($results, $request->perPage, $request->page)
+                $this->paginate($this->results, $request->perPage, $request->page)
             );
         } else {
-            return response()->json($results);
+            return response()->json($this->results);
         }
     }
 
@@ -199,5 +195,23 @@ class TripController extends Controller
         $page = $page ?: (Paginator::resolveCurrentPage() ?: 1);
         $items = $items instanceof Collection ? $items : Collection::make($items);
         return new LengthAwarePaginator($items->forPage($page, $perPage), $items->count(), $perPage, $page, $options);
+    }
+
+    /**
+     * Sort results by price or by time
+     * @return void
+     */
+    private function sort(){
+        if($this->request->sortBy == "price"){
+            usort($this->results, function($a, $b) {
+                return $a['price'] <=> $b['price'];
+            });
+        }
+        elseif($this->request->sortBy == "time")
+        {
+            usort($this->results, function($a, $b) {
+                return $a['itinerary'][0]->resource->departure_time <=> $b['itinerary'][0]->resource->departure_time;
+            });
+        }
     }
 }
