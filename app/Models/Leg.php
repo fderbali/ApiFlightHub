@@ -19,7 +19,7 @@ class Leg extends Model
         return $this->belongsTo(Airport::class, 'arrival_airport');
     }
 
-    public function airline()
+    public function airlineCompany()
     {
         return $this->belongsTo(Airline::class, 'airline');
     }
