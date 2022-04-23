@@ -24,7 +24,10 @@ class TripRequest extends FormRequest
     public function rules()
     {
         return [
-            "cityPairs" => "required"
+            "cityPairs" => "required",
+            "perPage"=> "required|int",
+            "page"=> "required|int",
+            "airlines" => "array|min:1",
         ];
     }
 }

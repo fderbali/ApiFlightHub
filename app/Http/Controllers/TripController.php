@@ -143,6 +143,12 @@ class TripController extends Controller
      */
     private function getItineraries($cityPair): Collection
     {
+        if($this->request->airlines){
+            return Leg::where([
+                ["departure_airport","=",$cityPair["airport_dep"]],
+                ["arrival_airport","=",$cityPair["airport_arr"]]
+            ])->whereIn('airline', $this->request->airlines)->get();
+        }
         return Leg::where([
             ["departure_airport","=",$cityPair["airport_dep"]],
             ["arrival_airport","=",$cityPair["airport_arr"]]
