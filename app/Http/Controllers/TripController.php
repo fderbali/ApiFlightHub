@@ -129,6 +129,10 @@ class TripController extends Controller
                     }
                 }
                 break;
+            default:
+                return response()->json(
+                    ["error"=>"maximum 4 legs supported for multicities flights"]
+                );
         }
 
         if($this->request->page && $this->request->perPage) {
