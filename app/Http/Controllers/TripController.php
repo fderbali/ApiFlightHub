@@ -134,7 +134,13 @@ class TripController extends Controller
                     ["error"=>"maximum 4 legs supported for multicities flights"]
                 );
         }
-
+        // Sort results before render
+        if($this->request->sortBy == "price"){
+            usort($results, function($a, $b) {
+                return $a['price'] <=> $b['price'];
+            });
+        }
+        // Paginate results if we have perPage and page in the request
         if($this->request->page && $this->request->perPage) {
             return response()->json(
                 $this->paginate($results, $request->perPage, $request->page)
