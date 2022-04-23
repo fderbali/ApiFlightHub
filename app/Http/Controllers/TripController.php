@@ -11,13 +11,23 @@ use Illuminate\Pagination\Paginator;
 
 class TripController extends Controller
 {
+    private $request;
+
+    /**
+     * @param TripRequest $request
+     */
+    public function __construct(TripRequest $request){
+        $this->request = $request;
+    }
+
     /**
      * build trips according to search data
      * @param TripRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function buildTrips(TripRequest $request): \Illuminate\Http\JsonResponse
+    public function buildTrips(): \Illuminate\Http\JsonResponse
     {
+        $request = $this->request;
         $results = [];
         if(count($request->cityPairs) == 1){
             // One way
