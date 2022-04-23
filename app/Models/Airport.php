@@ -9,4 +9,7 @@ class Airport extends Model
 {
     use HasFactory;
     public $timestamps = false;
+    protected $primaryKey = "code";
+    public $incrementing = false;
+    protected $keyType = 'string';
 }
