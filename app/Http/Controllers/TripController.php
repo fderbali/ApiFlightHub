@@ -60,6 +60,34 @@ class TripController extends Controller
                 }
             }
         }
+        elseif(count($request->cityPairs) == 3)
+        {
+            $trip_type = "MC";
+            $boundOne = $this->getItineraries($request->cityPairs[0]);
+            $boundTwo = $this->getItineraries($request->cityPairs[1]);
+            $boundThree = $this->getItineraries($request->cityPairs[2]);
+
+            foreach ($boundOne as $boundOneItin) {
+                foreach ($boundTwo as $boundTwoItin) {
+                    if($this->isCompatible($boundOneItin, $boundTwoItin,)){
+                        foreach ($boundThree as $boundThreeItin) {
+                            if($this->isCompatible($boundTwoItin, $boundThreeItin,)) {
+                                $result = [
+                                    "itinerary" => [new LegResource($boundOneItin), new LegResource($boundTwoItin), new LegResource($boundThreeItin)],
+                                    "trip_type" => $trip_type,
+                                    "price" => sprintf("%.2f", $boundOneItin->price + $boundTwoItin->price + $boundThreeItin->price),
+                                    "date_dep_first_leg" => $request->cityPairs[0]["date_dep"],
+                                    "date_dep_second_leg" => $request->cityPairs[1]["date_dep"],
+                                    "date_dep_third_leg" => $request->cityPairs[2]["date_dep"]
+                                ];
+                                $results[] = $result;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         return response()->json(
             $this->paginate($results,$request->perPage, $request->page)
         );
