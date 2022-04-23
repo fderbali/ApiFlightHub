@@ -18,7 +18,7 @@ class LegResource extends JsonResource
         return [
             "airline" => $this->airline,
             "airline_name" => $this->airlineCompany->name,
-            "number" => $this->number,
+            "flight_number" => $this->number,
             "departure" => [
                 "airport" => $this->departure_airport,
                 "time" => Carbon::parse($this->departure_time)->format('H:i'),

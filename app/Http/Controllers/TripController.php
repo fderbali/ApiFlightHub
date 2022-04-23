@@ -5,10 +5,19 @@ namespace App\Http\Controllers;
 use App\Http\Requests\TripRequest;
 use App\Http\Resources\LegResource;
 use App\Models\Leg;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Pagination\Paginator;
 
 class TripController extends Controller
 {
-    public function buildTrips(TripRequest $request){
+    /**
+     * build trips according to search data
+     * @param TripRequest $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function buildTrips(TripRequest $request): \Illuminate\Http\JsonResponse
+    {
         $results = [];
         if(count($request->cityPairs) == 1){
             // One way
@@ -16,30 +25,88 @@ class TripController extends Controller
             foreach ($itineraries as $itinerary){
                 $result = [
                     "itinerary" => [new LegResource($itinerary)],
-                    "searchtype" => "OW",
-                    "price" => sprintf("%.2f",$itinerary->price)
+                    "trip_type" => "OW",
+                    "price" => sprintf("%.2f",$itinerary->price),
+                    "date_dep" => $request->cityPairs[0]["date_dep"]
                 ];
                 $results[] = $result;
             }
         }
-        else
+        elseif(count($request->cityPairs) == 2)
         {
-            foreach ($request->cityPairs as $cityPair){
-                $itinerary = $this->getItinerary($cityPair);
+            // Return or openjaw flight
+            if($request->cityPairs[0]['airport_dep'] == $request->cityPairs[1]['airport_arr'] &&
+               $request->cityPairs[0]['airport_arr'] == $request->cityPairs[1]['airport_dep']
+            ){
+                $trip_type = "RE";
+            } else {
+                $trip_type = "OJ";
+            }
+            $outboundItineraries = $this->getItineraries($request->cityPairs[0]);
+            $inboundItineraries = $this->getItineraries($request->cityPairs[1]);
+
+            foreach ($outboundItineraries as $outboundItinerary) {
+                foreach ($inboundItineraries as $inboundItinerary) {
+                    if($this->isCompatible($outboundItinerary, $inboundItinerary)){
+                        $result = [
+                            "itinerary" => [new LegResource($outboundItinerary), new LegResource($inboundItinerary)],
+                            "trip_type" => $trip_type,
+                            "price" => sprintf("%.2f",$outboundItinerary->price + $inboundItinerary->price),
+                            "date_dep" => $request->cityPairs[0]["date_dep"],
+                            "date_ret" => $request->cityPairs[1]["date_dep"]
+                        ];
+                        $results[] = $result;
+                    }
+                }
             }
         }
-        return response()->json($results);
+        return response()->json(
+            $this->paginate($results,$request->perPage, $request->page)
+        );
     }
 
-    private function getItineraries($cityPair){
-        $legs = Leg::where([
+    /**
+     * fetch flights according to search data
+     * @param $cityPair
+     * @return Collection
+     */
+    private function getItineraries($cityPair): Collection
+    {
+        return Leg::where([
             ["departure_airport","=",$cityPair["airport_dep"]],
             ["arrival_airport","=",$cityPair["airport_arr"]]
         ])->get();
-        return($legs);
     }
 
-    private function calculatePrice($itinerary){
-        print_r($itinerary);exit;
+    /**
+     * check if two itineraries are compatible,
+     * for example if departure time of $itineraryTwo is before arrival time of itinerary one,
+     * then these itineraries are not compatible
+     * @param $itineraryOne
+     * @param $itineraryTwo
+     * @return boolean
+     */
+    private function isCompatible($itineraryOne, $itineraryTwo): bool
+    {
+        if($itineraryTwo->departure_time < $itineraryOne->arrival_time){
+            return false;
+        }
+        return true;
+    }
+
+
+    /**
+     * Paginate results
+     * @param $items
+     * @param int $perPage
+     * @param $page
+     * @param array $options
+     * @return LengthAwarePaginator
+     */
+    private function paginate($items, int $perPage = 10, $page = null, array $options = []): LengthAwarePaginator
+    {
+        $page = $page ?: (Paginator::resolveCurrentPage() ?: 1);
+        $items = $items instanceof Collection ? $items : Collection::make($items);
+        return new LengthAwarePaginator($items->forPage($page, $perPage), $items->count(), $perPage, $page, $options);
     }
 }
