@@ -44,7 +44,7 @@ class TripController extends Controller
                 }
                 break;
             case 2:
-                // Return or openjaw flight
+                // Return flight or openjaw flight
                 if($request->cityPairs[0]['airport_dep'] == $request->cityPairs[1]['airport_arr'] &&
                    $request->cityPairs[0]['airport_arr'] == $request->cityPairs[1]['airport_dep']
                 ){
