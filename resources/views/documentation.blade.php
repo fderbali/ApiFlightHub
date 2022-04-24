@@ -8,7 +8,7 @@
 
         <!-- Fonts -->
         <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1/dist/css/bootstrap.min.css" rel="stylesheet">
         <!-- Styles -->
         <style>
             body {
@@ -22,6 +22,25 @@
                 margin: 5px;
                 padding: 15px;
             }
+            #myBtn {
+                display: none;
+                position: fixed;
+                bottom: 20px;
+                right: 30px;
+                z-index: 99;
+                font-size: 18px;
+                border: none;
+                outline: none;
+                background-color: red;
+                color: white;
+                cursor: pointer;
+                padding: 15px;
+                border-radius: 4px;
+            }
+
+            #myBtn:hover {
+                background-color: #555;
+            }
         </style>
     </head>
     <body>
@@ -30,10 +49,16 @@
                 <a class="navbar-brand" href="https://fahmiderbali.com">Trip Builder</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <!--ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                        <li class="nav-item"><a class="nav-link active" aria-current="page" href="#">Home</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#">Link</a></li>
-                    </ul-->
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                        <li class="nav-item"><a class="nav-link" aria-current="page" href="#installation">Installation</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#endpoint">Endpoint</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#flight_search">Flight search</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#response">Response</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#airline_filter">Filter by airline</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#sort">Sort results</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#pagination">Pagination</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#maxresults">Limit results</a></li>
+                    </ul>
                 </div>
             </div>
         </nav>
@@ -43,7 +68,7 @@
                 <h1>Trip builder documentation</h1>
             </div>
             <div class="m-5">
-                <h4>Installation :</h4>
+                <h4 id="installation">Installation :</h4>
                 <p>To start running this project locally, please run the commands bellow:</p>
                 <code>
                     composer update
@@ -53,13 +78,13 @@
                 </code>
             </div>
             <div class="m-5">
-                <h4>Endpoint :</h4>
+                <h4 id="endpoint">Endpoint :</h4>
                 <code>
                     https://fahmiderbali.com/api/v1/shopping
                 </code>
             </div>
             <div class="m-5">
-                <h4>Flight search :</h4>
+                <h4 id="flight_search">Flight search :</h4>
                 <p>Flight builder support 4 search types : one way, return, open jaw and multicity.</p>
                 <p>To make a flight search, we have to provide city pairs.</p>
                 <ul>
@@ -157,6 +182,16 @@
                 </code>
                 <b>POST</b> method must be use to perform a flight search.
                 <img src="{{ asset('img/example_request.png') }}" alt="">
+            </div>
+            <div class="m-5">
+                <h4 id="response">Reponse :</h4>
+                <p>Response is composed by the following elements :</p>
+                <ul>
+                    <li>itinerary: the itinerary of the trip</li>
+                    <li>trip_type: can be <b>OW</b> for one way, <b>RE</b> for return, <b>OJ</b> for open jaw or <b>MC</b> for multi-city</li>
+                    <li>price: the total price of the trip</li>
+                    <li>date_dep: departure date of the trip</li>
+                </ul>
                 <p>Here is an example of response of one way flight search :</p>
                 <code>
                     <pre>
@@ -232,7 +267,7 @@
                 </code>
             </div>
             <div class="m-5">
-                <h4>Filter by airline</h4>
+                <h4 id="airline_filter">Filter by airline</h4>
                 <p>
                     You can filter results by airline. To do so, add a new parameter in request : <b>airlines</b><br>
                     This parameter must be an array.
@@ -259,7 +294,7 @@
                 </code>
             </div>
             <div class="m-5">
-                <h4>Sort results</h4>
+                <h4 id="sort">Sort results</h4>
                 <p>
                     You can sort results by price or by departure time. To do so, add a new parameter in request : <b>sortBy</b><br>
                     This parameter must <b>price</b> or <b>time</b>
@@ -286,7 +321,7 @@
                 </code>
             </div>
             <div class="m-5">
-                <h4>Pagination :</h4>
+                <h4 id="pagination">Pagination :</h4>
                 <p>
                     Results can be paginated. To have results paginated, add 2 new parameters in request : <b>page</b> and <b>perPage</b><br>
                 </p>
@@ -316,7 +351,7 @@
                 </code>
             </div>
             <div class="m-5">
-                <h4>Limit results number :</h4>
+                <h4 id="maxresults">Limit results number :</h4>
                 <p>
                     Results can be limited. To do so, add a new parameters in request : <b>maxresults</b><br>
                 </p>
@@ -342,5 +377,27 @@
                 </code>
             </div>
         </div>
+        <button onclick="topFunction()" id="myBtn" title="Go to top">Top</button>
+        <script>
+            //Get the button
+            var mybutton = document.getElementById("myBtn");
+
+            // When the user scrolls down 20px from the top of the document, show the button
+            window.onscroll = function() {scrollFunction()};
+
+            function scrollFunction() {
+                if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+                    mybutton.style.display = "block";
+                } else {
+                    mybutton.style.display = "none";
+                }
+            }
+
+            // When the user clicks on the button, scroll to the top of the document
+            function topFunction() {
+                document.body.scrollTop = 0;
+                document.documentElement.scrollTop = 0;
+            }
+        </script>
     </body>
 </html>
