@@ -25,9 +25,11 @@ class TripRequest extends FormRequest
     {
         return [
             "cityPairs" => "required",
-            "perPage"=> "int",
+            "perPage" => "int",
             "page"=> "int",
             "airlines" => "array|min:1",
+            "maxresults" => "int",
+            "sortBy" => "string"
         ];
     }
 }
