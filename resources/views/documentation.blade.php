@@ -41,6 +41,7 @@
             #myBtn:hover {
                 background-color: #555;
             }
+            a{text-decoration: none;}
         </style>
     </head>
     <body>
@@ -50,6 +51,7 @@
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                        <li class="nav-item"><a class="nav-link" aria-current="page" href="#github">Repos Github</a></li>
                         <li class="nav-item"><a class="nav-link" aria-current="page" href="#installation">Installation</a></li>
                         <li class="nav-item"><a class="nav-link" href="#endpoint">Endpoint</a></li>
                         <li class="nav-item"><a class="nav-link" href="#flight_search">Flight search</a></li>
@@ -66,6 +68,12 @@
         <div class="container">
             <div class="text-center mt-5">
                 <h1>Trip builder documentation</h1>
+            </div>
+            <div class="m-5">
+                <h4 id="github">Respos Github :</h4>
+                <code>
+                    <a target="_blank" href="https://github.com/fderbali/ApiFlightHub">https://github.com/fderbali/ApiFlightHub</a>
+                </code>
             </div>
             <div class="m-5">
                 <h4 id="installation">Installation :</h4>
