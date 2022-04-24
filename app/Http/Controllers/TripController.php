@@ -134,8 +134,13 @@ class TripController extends Controller
                     ["error"=>"maximum 4 legs supported for multicities flights"]
                 );
         }
-        // Sort results before render
+
+        // Sort results
         $this->sort();
+
+        // Limit results if maxresults is provided :
+        $this->results = array_slice($this->results, 0, $this->request->maxresults);
+
         // Paginate results if we have perPage and page in the request
         if($this->request->page && $this->request->perPage) {
             return response()->json(
