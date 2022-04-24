@@ -202,6 +202,7 @@ class TripController extends Controller
      * @return void
      */
     private function sort(){
+        // Sort will be performed if parameter sortBy is "price" or "time", otherwise there will be no sort.
         if($this->request->sortBy == "price"){
             usort($this->results, function($a, $b) {
                 return $a['price'] <=> $b['price'];
