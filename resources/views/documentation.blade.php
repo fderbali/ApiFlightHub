@@ -79,7 +79,10 @@
                 <h4 id="installation">Installation :</h4>
                 <p>To start running this project locally, please run the commands bellow:</p>
                 <code>
-                    composer update
+                    composer install
+                </code>
+                <code>
+                    php artisan key:generate
                 </code>
                 <code>
                     php artisan migrate --seed
